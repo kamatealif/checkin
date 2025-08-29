@@ -10,7 +10,7 @@
       <!-- Heading -->
       <h2 class="text-3xl font-extrabold text-center mb-6
                  bg-gradient-to-r from-white to-[var(--color-primary)] bg-clip-text text-transparent">
-        Register
+        Login
       </h2>
   
       <!-- Toggle Tabs -->
@@ -35,7 +35,7 @@
   
       <!-- Teacher Form -->
       {#if activeTab === 'teacher'}
-        <form class="space-y-4" transition:slide={{ duration: 250 }}>
+        <form class="space-y-4" transition:slide={{ duration: 250, "axis": "y" }}>
           <div>
             <label for="email" class="block text-sm font-medium mb-1">Email</label>
             <input id="email" type="email" placeholder="teacher@example.com"
@@ -48,39 +48,18 @@
               class="w-full px-4 py-3 rounded-lg bg-[var(--color-background)] border border-gray-700 
                      focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] outline-none"/>
           </div>
-          <div>
-            <label for="department" class="block text-sm font-medium mb-1">Department</label>
-            <select id="department"
-              class="w-full px-4 py-3 rounded-lg bg-[var(--color-background)] border border-gray-700 
-                     focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] outline-none">
-              <option>Arts</option>
-              <option>Commerce</option>
-              <option>BSc</option>
-              <option>BCA</option>
-              <option>MCA</option>
-            </select>
-          </div>
+        
           <button 
             type="submit"
             class="w-full py-3 rounded-lg bg-[var(--color-primary)] hover:opacity-90 transition font-semibold">
-            Register as Teacher
+            Login as Teacher
           </button>
         </form>
       {:else}
         <!-- Student Form -->
-        <form class="space-y-4" transition:slide={{ duration: 250 }}>
-          <div>
-            <label for="name" class="block text-sm font-medium mb-1">Name</label>
-            <input id="name" type="text" placeholder="Enter full name"
-              class="w-full px-4 py-3 rounded-lg bg-[var(--color-background)] border border-gray-700 
-                     focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] outline-none"/>
-          </div>
-          <div>
-            <label for="class" class="block text-sm font-medium mb-1">Class</label>
-            <input id="class" type="text" placeholder="Enter class (e.g. FY BSc, TY BTech)"
-              class="w-full px-4 py-3 rounded-lg bg-[var(--color-background)] border border-gray-700 
-                     focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)] outline-none"/>
-          </div>
+        <form class="space-y-4" transition:slide={{ duration: 250, "axis": "y"}}>
+        
+          
           <div>
             <label for="prn" class="block text-sm font-medium mb-1">PRN (Permanent Registration Number)</label>
             <input id="prn" type="text" placeholder="Enter PRN"
@@ -96,7 +75,7 @@
           <button 
             type="submit"
             class="w-full py-3 rounded-lg bg-[var(--color-primary)] hover:opacity-90 transition font-semibold">
-            Register as Student
+            Login as Student
           </button>
         </form>
       {/if}

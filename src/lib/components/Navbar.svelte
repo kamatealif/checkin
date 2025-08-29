@@ -16,7 +16,7 @@
           <a href="/" class="hover:text-[var(--color-primary)] transition">Home</a>
           <a href="/students" class="hover:text-[var(--color-primary)] transition">Students</a>
           <a href="/reports" class="hover:text-[var(--color-primary)] transition">Reports</a>
-          <a href="/login" class="hover:text-[var(--color-primary)] transition">Login</a>
+          <a href="/auth/login" class="hover:text-[var(--color-primary)] transition">Login</a>
         </div>
   
         <!-- Mobile Hamburger -->
