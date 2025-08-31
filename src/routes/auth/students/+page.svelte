@@ -66,8 +66,13 @@
       }
     }
   </script>
+  <div
+  class="relative min-h-screen flex flex-col items-center justify-center text-center px-6
+         bg-[var(--color-background)] 
+         [background-image:repeating-linear-gradient(-45deg,rgba(253,54,110,0.08)_0,rgba(253,54,110,0.08)_2px,transparent_2px,transparent_20px)]"
+>
   
-  <div class="min-h-screen flex items-center justify-center bg-neutral-900  px-4">
+  <!-- <div class="min-h-screen flex items-center justify-center bg-neutral-900  px-4"> -->
     <div
       class="w-full max-w-md bg-card/60 text-card-foreground rounded-2xl shadow-2xl p-8 space-y-6 backdrop-blur-lg"
     >
@@ -187,3 +192,4 @@
     </div>
   </div>
   
+
