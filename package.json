@@ -25,7 +25,7 @@
     "@appwrite.io/pink-icons": "^0.25.0",
     "@sveltejs/adapter-node": "^5.2.12",
     "@tailwindcss/vite": "^4.1.12",
-    "appwrite": "^16.1.0",
+    "appwrite": "^18.1.1",
     "node-appwrite": "^18.0.0",
     "tailwindcss": "^4.1.12"
   }

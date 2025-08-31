@@ -46,11 +46,11 @@
   
     <!-- CTA Buttons -->
     <div class="flex flex-col md:flex-row gap-4 z-10">
-      <a href="/teacher-register" 
+      <a href="/auth/teachers" 
          class="bg-[var(--color-primary)] hover:opacity-90 px-8 py-3 rounded-sm font-semibold shadow-lg transition transform hover:-translate-y-1">
         Register as Teacher
       </a>
-      <a href="/student-register" 
+      <a href="/auth/students" 
          class="bg-transparent border-2 border-[var(--color-primary)] hover:bg-[color-mix(in_srgb,var(--color-primary)_20%,transparent)] px-8 py-3 rounded-sm font-semibold text-[var(--color-primary)] shadow-lg transition transform hover:-translate-y-1">
         Register as Student
       </a>
