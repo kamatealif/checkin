@@ -67,9 +67,9 @@
     }
   </script>
   
-  <div class="min-h-screen flex items-center justify-center bg-[#131315]/50  px-4">
+  <div class="min-h-screen flex items-center justify-center bg-neutral-900  px-4">
     <div
-      class="w-full max-w-md bg-card/90 text-card-foreground rounded-2xl shadow-2xl p-8 space-y-6 backdrop-blur-lg"
+      class="w-full max-w-md bg-card/60 text-card-foreground rounded-2xl shadow-2xl p-8 space-y-6 backdrop-blur-lg"
     >
       {#if step === "request"}
         <div class="space-y-6">
@@ -93,27 +93,27 @@
             <input
               bind:value={firstName}
               placeholder="First Name"
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             />
             <input
               bind:value={lastName}
               placeholder="Last Name"
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             />
             <input
               type="email"
               bind:value={email}
               placeholder="Email"
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             />
             <select
               bind:value={department}
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             >
-              <option value="" disabled selected>Select Department</option>
-              <option  value="BSC">BSC</option>
-              <option value="BCA">BCA</option>
-              <option value="BA">BA</option>
+              <option class="" value="" disabled selected>Select Department</option>
+              <option  class="" value="BSC">BSC</option>
+              <option class="" value="BCA">BCA</option>
+              <option class="" value="BA">BA</option>
               <option value="COMM">COMM</option>
               <option value="MCA">MCA</option>
               <option value="MSC">MSC</option>
@@ -121,11 +121,11 @@
             <input
               bind:value={prn}
               placeholder="PRN Number"
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             />
             <select
               bind:value={year}
-              class="w-full px-4 py-3 rounded-xl bg-background focus:ring-2 focus:ring-primary focus:outline-none transition"
+              class="w-full px-4 py-3 rounded-xl bg-surface focus:ring-2 focus:ring-primary focus:outline-none transition"
             >
               <option value="" disabled selected>Select Year</option>
               <option value="FY">First Year</option>
@@ -171,7 +171,7 @@
                     if (el.value && i < 5) document.getElementById(`otp-${i+1}`)?.focus();
                     secret += el.value;
                   }}
-                  class="w-12 h-12 text-center text-lg font-bold rounded-lg bg-background focus:ring-2 focus:ring-primary focus:outline-none shadow-md"
+                  class="w-12 h-12 text-center text-lg font-bold rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:outline-none shadow-md"
                 />
               {/each}
             </div>

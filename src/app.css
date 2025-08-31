@@ -8,6 +8,7 @@ summary::-webkit-details-marker {
   --color-primary: #fd366e;
   --color-background: #131315;
   --color-surface: #1d1d21;
+  --color-sec-bg : #19191c;
 }
 
 /* optional globals */
