@@ -1,0 +1,1088 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendEase - Smart Attendance Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(142.1 76.2% 36.3%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(24.6 95% 53.1%);
+            --accent-foreground: hsl(210 40% 98%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 0.75rem;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .dark {
+            --background: hsl(222.2 84% 4.9%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222.2 84% 4.9%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222.2 84% 4.9%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(217.2 91.2% 59.8%);
+            --primary-foreground: hsl(222.2 84% 4.9%);
+            --secondary: hsl(142.1 70.6% 45.3%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(217.2 32.6% 17.5%);
+            --muted-foreground: hsl(215 20.2% 65.1%);
+            --accent: hsl(24.6 95% 53.1%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 62.8% 30.6%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217.2 32.6% 17.5%);
+            --input: hsl(217.2 32.6% 17.5%);
+            --ring: hsl(224.3 76.3% 94.1%);
+        }
+        
+        * {
+            border-color: hsl(var(--border));
+        }
+        
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: var(--font-sans);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="min-h-screen bg-background text-foreground antialiased">
+
+    <!-- @COMPONENT: LoginScreen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-primary mb-2">AttendEase</h1>
+                <p class="text-lg text-muted-foreground">Smart Attendance Management</p>
+            </div>
+            
+            <div class="bg-card rounded-lg shadow-lg p-8 border border-border">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-semibold text-card-foreground">Welcome Back</h2>
+                    <p class="text-muted-foreground mt-1">Choose your role to continue</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <button onclick="switchToView('teacherLogin')" class="w-full bg-primary text-primary-foreground px-6 py-4 rounded-md font-medium hover:bg-primary/90 transition-colors flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Continue as Teacher</span>
+                    </button>
+                    
+                    <button onclick="switchToView('studentLogin')" class="w-full bg-secondary text-secondary-foreground px-6 py-4 rounded-md font-medium hover:bg-secondary/90 transition-colors flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <span>Continue as Student</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LoginScreen -->
+
+    <!-- @COMPONENT: TeacherLogin -->
+    <div id="teacherLogin" class="min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 hidden">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <button onclick="switchToView('loginScreen')" class="inline-flex items-center text-primary hover:text-primary/80 mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Back
+                </button>
+                <h2 class="text-3xl font-bold text-card-foreground">Teacher Login</h2>
+                <p class="text-muted-foreground mt-2">Access your teaching dashboard</p>
+            </div>
+            
+            <div class="bg-card rounded-lg shadow-lg p-8 border border-border">
+                <form class="space-y-6" data-mock="true">
+                    <div>
+                        <label for="teacherEmail" class="block text-sm font-medium text-card-foreground mb-2">Email Address</label>
+                        <input id="teacherEmail" type="email" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="teacher@school.edu" data-mock="true">
+                    </div>
+                    
+                    <div>
+                        <label for="teacherPassword" class="block text-sm font-medium text-card-foreground mb-2">Password</label>
+                        <input id="teacherPassword" type="password" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="••••••••" data-mock="true">
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-primary bg-background border-border rounded focus:ring-ring">
+                            <span class="ml-2 text-sm text-muted-foreground">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-primary hover:text-primary/80">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" onclick="switchToView('teacherDashboard')" class="w-full bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-muted-foreground">
+                        Don't have an account? 
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium">Contact Admin</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: TeacherLogin -->
+
+    <!-- @COMPONENT: StudentLogin -->
+    <div id="studentLogin" class="min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 hidden">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <button onclick="switchToView('loginScreen')" class="inline-flex items-center text-primary hover:text-primary/80 mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Back
+                </button>
+                <h2 class="text-3xl font-bold text-card-foreground">Student Portal</h2>
+                <p class="text-muted-foreground mt-2">Join a class or view your attendance</p>
+            </div>
+            
+            <div class="bg-card rounded-lg shadow-lg p-8 border border-border">
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-card-foreground mb-4">Join Class</h3>
+                    </div>
+                    
+                    <form class="space-y-4" data-mock="true">
+                        <div>
+                            <label for="classId" class="block text-sm font-medium text-card-foreground mb-2">Class ID</label>
+                            <input id="classId" type="text" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Enter Class ID" data-mock="true">
+                        </div>
+                        
+                        <div>
+                            <label for="classPassword" class="block text-sm font-medium text-card-foreground mb-2">Class Password</label>
+                            <input id="classPassword" type="password" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Enter Password" data-mock="true">
+                        </div>
+                        
+                        <div>
+                            <label for="studentName" class="block text-sm font-medium text-card-foreground mb-2">Your Name</label>
+                            <input id="studentName" type="text" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Enter your full name" data-mock="true">
+                        </div>
+                        
+                        <button type="submit" onclick="switchToView('studentDashboard')" class="w-full bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-medium hover:bg-secondary/90 transition-colors">
+                            Join Class
+                        </button>
+                    </form>
+                    
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-border"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-card text-muted-foreground">OR</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="switchToView('studentDashboard')" class="w-full bg-muted text-muted-foreground px-6 py-3 rounded-md font-medium hover:bg-muted/80 transition-colors">
+                        View My Attendance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: StudentLogin -->
+
+    <!-- @COMPONENT: TeacherDashboard -->
+    <div id="teacherDashboard" class="min-h-screen bg-background hidden">
+        <!-- Navigation Header -->
+        <nav class="bg-card border-b border-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-xl font-bold text-primary">AttendEase</h1>
+                        <span class="text-muted-foreground">Teacher Portal</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-muted-foreground" data-bind="teacher.name" data-mock="true">Prof. Sarah Johnson</span>
+                        <button onclick="switchToView('loginScreen')" class="text-muted-foreground hover:text-foreground">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tab Navigation -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+            <div class="border-b border-border">
+                <nav class="-mb-px flex space-x-8">
+                    <button onclick="switchTab('overview')" id="tab-overview" class="border-b-2 border-primary text-primary py-2 px-1 font-medium text-sm whitespace-nowrap">
+                        Overview
+                    </button>
+                    <button onclick="switchTab('classes')" id="tab-classes" class="border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border py-2 px-1 font-medium text-sm whitespace-nowrap">
+                        My Classes
+                    </button>
+                    <button onclick="switchTab('attendance')" id="tab-attendance" class="border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border py-2 px-1 font-medium text-sm whitespace-nowrap">
+                        Mark Attendance
+                    </button>
+                    <button onclick="switchTab('analytics')" id="tab-analytics" class="border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border py-2 px-1 font-medium text-sm whitespace-nowrap">
+                        Analytics
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            
+            <!-- Overview Tab -->
+            <div id="content-overview" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Stats Cards -->
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Total Classes</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.totalClasses" data-mock="true">5</p>
+                            </div>
+                            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Total Students</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.totalStudents" data-mock="true">127</p>
+                            </div>
+                            <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Avg Attendance</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.avgAttendance" data-mock="true">87%</p>
+                            </div>
+                            <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Today's Sessions</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.todaySessions" data-mock="true">3</p>
+                            </div>
+                            <div class="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <h3 class="text-lg font-semibold text-card-foreground mb-4">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <!-- @MAP: recentActivity.map(activity => ( -->
+                        <div class="flex items-center justify-between py-3 border-b border-border last:border-b-0" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-card-foreground" data-bind="activity.description" data-mock="true">Attendance marked for Computer Science 101</p>
+                                    <p class="text-xs text-muted-foreground" data-bind="activity.time" data-mock="true">2 hours ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full" data-bind="activity.status" data-mock="true">Completed</span>
+                        </div>
+                        <!-- @END_MAP )) -->
+                        
+                        <div class="flex items-center justify-between py-3 border-b border-border last:border-b-0" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-card-foreground">New student joined Data Structures</p>
+                                    <p class="text-xs text-muted-foreground">4 hours ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full">New</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between py-3" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-card-foreground">Created new class: Advanced Algorithms</p>
+                                    <p class="text-xs text-muted-foreground">Yesterday</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full">Created</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classes Tab -->
+            <div id="content-classes" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-card-foreground">My Classes</h2>
+                    <button onclick="openModal('createClassModal')" class="bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Create New Class</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- @MAP: classes.map(class => ( -->
+                    <div class="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-shadow" data-mock="true">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-card-foreground" data-bind="class.name" data-mock="true">Computer Science 101</h3>
+                            <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full" data-bind="class.status" data-mock="true">Active</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Class ID:</span>
+                                <span class="font-mono text-card-foreground" data-bind="class.id" data-mock="true">CS101-2024</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Students:</span>
+                                <span class="text-card-foreground" data-bind="class.studentCount" data-mock="true">32</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Avg Attendance:</span>
+                                <span class="text-card-foreground" data-bind="class.avgAttendance" data-mock="true">89%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-border flex space-x-2">
+                            <button class="flex-1 bg-muted text-muted-foreground px-3 py-2 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                                View Details
+                            </button>
+                            <button onclick="switchTab('attendance')" class="flex-1 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                Take Attendance
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                    
+                    <div class="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-shadow" data-mock="true">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-card-foreground">Data Structures</h3>
+                            <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full">Active</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Class ID:</span>
+                                <span class="font-mono text-card-foreground">DS201-2024</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Students:</span>
+                                <span class="text-card-foreground">28</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Avg Attendance:</span>
+                                <span class="text-card-foreground">92%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-border flex space-x-2">
+                            <button class="flex-1 bg-muted text-muted-foreground px-3 py-2 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                                View Details
+                            </button>
+                            <button onclick="switchTab('attendance')" class="flex-1 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                Take Attendance
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-shadow" data-mock="true">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-card-foreground">Advanced Algorithms</h3>
+                            <span class="text-xs bg-accent/10 text-accent px-2 py-1 rounded-full">New</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Class ID:</span>
+                                <span class="font-mono text-card-foreground">ALG301-2024</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Students:</span>
+                                <span class="text-card-foreground">15</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-muted-foreground">Avg Attendance:</span>
+                                <span class="text-card-foreground">95%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-border flex space-x-2">
+                            <button class="flex-1 bg-muted text-muted-foreground px-3 py-2 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                                View Details
+                            </button>
+                            <button onclick="switchTab('attendance')" class="flex-1 bg-primary text-primary-foreground px-3 py-2 rounded-md text-sm hover:bg-primary/90 transition-colors">
+                                Take Attendance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Tab -->
+            <div id="content-attendance" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-card-foreground">Mark Attendance</h2>
+                    <div class="flex items-center space-x-4">
+                        <select class="bg-background border border-input rounded-md px-3 py-2 text-sm">
+                            <option data-mock="true">Computer Science 101</option>
+                            <option data-mock="true">Data Structures</option>
+                            <option data-mock="true">Advanced Algorithms</option>
+                        </select>
+                        <span class="text-sm text-muted-foreground" data-mock="true">Today: Dec 15, 2024</span>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-card-foreground">Student List</h3>
+                            <p class="text-sm text-muted-foreground">Mark attendance for today's lecture</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm hover:bg-secondary/90 transition-colors">
+                                Mark All Present
+                            </button>
+                            <button class="bg-muted text-muted-foreground px-4 py-2 rounded-md text-sm hover:bg-muted/80 transition-colors">
+                                Save Attendance
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden border border-border rounded-lg">
+                        <table class="min-w-full divide-y divide-border">
+                            <thead class="bg-muted">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Student</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Roll No.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-card divide-y divide-border">
+                                <!-- @MAP: students.map(student => ( -->
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-xs font-medium text-primary" data-bind="student.initials" data-mock="true">AJ</span>
+                                            </div>
+                                            <span class="text-sm font-medium text-card-foreground" data-bind="student.name" data-mock="true">Alice Johnson</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground" data-bind="student.rollNo" data-mock="true">CS001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary" data-bind="student.status" data-mock="true">Present</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-secondary text-secondary-foreground px-3 py-1 rounded text-xs hover:bg-secondary/90 transition-colors">Present</button>
+                                            <button class="bg-destructive text-destructive-foreground px-3 py-1 rounded text-xs hover:bg-destructive/90 transition-colors">Absent</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                                
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-xs font-medium text-primary">BS</span>
+                                            </div>
+                                            <span class="text-sm font-medium text-card-foreground">Bob Smith</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">CS002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">Absent</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-secondary text-secondary-foreground px-3 py-1 rounded text-xs hover:bg-secondary/90 transition-colors">Present</button>
+                                            <button class="bg-destructive text-destructive-foreground px-3 py-1 rounded text-xs hover:bg-destructive/90 transition-colors">Absent</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-xs font-medium text-primary">CD</span>
+                                            </div>
+                                            <span class="text-sm font-medium text-card-foreground">Carol Davis</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">CS003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">Present</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex space-x-2">
+                                            <button class="bg-secondary text-secondary-foreground px-3 py-1 rounded text-xs hover:bg-secondary/90 transition-colors">Present</button>
+                                            <button class="bg-destructive text-destructive-foreground px-3 py-1 rounded text-xs hover:bg-destructive/90 transition-colors">Absent</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="content-analytics" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-card-foreground mb-6">Attendance Analytics</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Attendance Trend Chart -->
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <h3 class="text-lg font-semibold text-card-foreground mb-4">Weekly Attendance Trend</h3>
+                        <canvas id="attendanceChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <!-- Class Performance -->
+                    <div class="bg-card rounded-lg border border-border p-6">
+                        <h3 class="text-lg font-semibold text-card-foreground mb-4">Class Performance</h3>
+                        <canvas id="performanceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Detailed Statistics -->
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <h3 class="text-lg font-semibold text-card-foreground mb-4">Detailed Statistics</h3>
+                    <div class="overflow-hidden border border-border rounded-lg">
+                        <table class="min-w-full divide-y divide-border">
+                            <thead class="bg-muted">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Student</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Classes</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Attended</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Percentage</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-card divide-y divide-border">
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm font-medium text-card-foreground">Alice Johnson</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">20</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">18</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">90%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">Excellent</span>
+                                    </td>
+                                </tr>
+                                
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm font-medium text-card-foreground">Bob Smith</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">20</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">14</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">70%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">Warning</span>
+                                    </td>
+                                </tr>
+                                
+                                <tr data-mock="true">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm font-medium text-card-foreground">Carol Davis</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">20</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">19</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">95%</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">Excellent</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: TeacherDashboard -->
+
+    <!-- @COMPONENT: StudentDashboard -->
+    <div id="studentDashboard" class="min-h-screen bg-background hidden">
+        <!-- Navigation Header -->
+        <nav class="bg-card border-b border-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-xl font-bold text-primary">AttendEase</h1>
+                        <span class="text-muted-foreground">Student Portal</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-muted-foreground" data-bind="student.name" data-mock="true">John Doe</span>
+                        <button onclick="switchToView('loginScreen')" class="text-muted-foreground hover:text-foreground">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- Student Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-muted-foreground">Enrolled Classes</p>
+                            <p class="text-2xl font-bold text-card-foreground" data-bind="student.enrolledClasses" data-mock="true">3</p>
+                        </div>
+                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-muted-foreground">Overall Attendance</p>
+                            <p class="text-2xl font-bold text-card-foreground" data-bind="student.overallAttendance" data-mock="true">87%</p>
+                        </div>
+                        <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-lg border border-border p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-muted-foreground">Classes Today</p>
+                            <p class="text-2xl font-bold text-card-foreground" data-bind="student.classesToday" data-mock="true">2</p>
+                        </div>
+                        <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class List -->
+            <div class="bg-card rounded-lg border border-border p-6 mb-8">
+                <h3 class="text-lg font-semibold text-card-foreground mb-4">My Classes</h3>
+                <div class="space-y-4">
+                    <!-- @MAP: enrolledClasses.map(class => ( -->
+                    <div class="flex items-center justify-between p-4 bg-muted rounded-lg" data-mock="true">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <span class="text-sm font-bold text-primary" data-bind="class.code" data-mock="true">CS101</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-card-foreground" data-bind="class.name" data-mock="true">Computer Science 101</h4>
+                                <p class="text-xs text-muted-foreground" data-bind="class.teacher" data-mock="true">Prof. Sarah Johnson</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-card-foreground" data-bind="class.attendance" data-mock="true">89%</p>
+                            <p class="text-xs text-muted-foreground">Attendance</p>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                    
+                    <div class="flex items-center justify-between p-4 bg-muted rounded-lg" data-mock="true">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <span class="text-sm font-bold text-primary">DS201</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-card-foreground">Data Structures</h4>
+                                <p class="text-xs text-muted-foreground">Prof. Michael Chen</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-card-foreground">92%</p>
+                            <p class="text-xs text-muted-foreground">Attendance</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-muted rounded-lg" data-mock="true">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                <span class="text-sm font-bold text-primary">ALG301</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-card-foreground">Advanced Algorithms</h4>
+                                <p class="text-xs text-muted-foreground">Prof. Sarah Johnson</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-card-foreground">78%</p>
+                            <p class="text-xs text-muted-foreground">Attendance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Attendance -->
+            <div class="bg-card rounded-lg border border-border p-6">
+                <h3 class="text-lg font-semibold text-card-foreground mb-4">Recent Attendance</h3>
+                <div class="overflow-hidden border border-border rounded-lg">
+                    <table class="min-w-full divide-y divide-border">
+                        <thead class="bg-muted">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Class</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-card divide-y divide-border">
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">Dec 15, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">Computer Science 101</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">Present</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">09:00 AM</td>
+                            </tr>
+                            
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">Dec 14, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">Data Structures</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary">Present</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">11:00 AM</td>
+                            </tr>
+                            
+                            <tr data-mock="true">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-card-foreground">Dec 13, 2024</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">Advanced Algorithms</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">Absent</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">02:00 PM</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: StudentDashboard -->
+
+    <!-- @COMPONENT: CreateClassModal -->
+    <div id="createClassModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-card rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-card-foreground">Create New Class</h3>
+                    <button onclick="closeModal('createClassModal')" class="text-muted-foreground hover:text-foreground">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form class="space-y-4" data-mock="true">
+                    <div>
+                        <label for="className" class="block text-sm font-medium text-card-foreground mb-2">Class Name</label>
+                        <input id="className" type="text" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="e.g., Computer Science 101" data-mock="true">
+                    </div>
+                    
+                    <div>
+                        <label for="classDescription" class="block text-sm font-medium text-card-foreground mb-2">Description</label>
+                        <textarea id="classDescription" rows="3" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Brief description of the class" data-mock="true"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="classId" class="block text-sm font-medium text-card-foreground mb-2">Class ID</label>
+                            <input id="classId" type="text" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Auto-generated" disabled data-mock="true">
+                        </div>
+                        
+                        <div>
+                            <label for="classPassword" class="block text-sm font-medium text-card-foreground mb-2">Password</label>
+                            <input id="classPassword" type="text" class="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" placeholder="Enter password" data-mock="true">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeModal('createClassModal')" class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                            Create Class
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreateClassModal -->
+
+    <script>
+        (function() {
+            // View switching functionality
+            window.switchToView = function(viewId) {
+                const views = ['loginScreen', 'teacherLogin', 'studentLogin', 'teacherDashboard', 'studentDashboard'];
+                
+                views.forEach(view => {
+                    const element = document.getElementById(view);
+                    if (element) {
+                        element.classList.add('hidden');
+                    }
+                });
+                
+                const targetView = document.getElementById(viewId);
+                if (targetView) {
+                    targetView.classList.remove('hidden');
+                }
+            };
+
+            // Tab switching for teacher dashboard
+            window.switchTab = function(tabName) {
+                // Update tab buttons
+                const tabs = ['overview', 'classes', 'attendance', 'analytics'];
+                tabs.forEach(tab => {
+                    const button = document.getElementById(`tab-${tab}`);
+                    const content = document.getElementById(`content-${tab}`);
+                    
+                    if (button && content) {
+                        if (tab === tabName) {
+                            button.className = 'border-b-2 border-primary text-primary py-2 px-1 font-medium text-sm whitespace-nowrap';
+                            content.classList.remove('hidden');
+                        } else {
+                            button.className = 'border-b-2 border-transparent text-muted-foreground hover:text-foreground hover:border-border py-2 px-1 font-medium text-sm whitespace-nowrap';
+                            content.classList.add('hidden');
+                        }
+                    }
+                });
+                
+                // Initialize charts when analytics tab is opened
+                if (tabName === 'analytics') {
+                    setTimeout(initializeCharts, 100);
+                }
+            };
+
+            // Modal functions
+            window.openModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                }
+            };
+
+            window.closeModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            };
+
+            // Initialize charts for analytics
+            function initializeCharts() {
+                // Attendance Trend Chart
+                const attendanceCtx = document.getElementById('attendanceChart');
+                if (attendanceCtx && !attendanceCtx.chart) {
+                    attendanceCtx.chart = new Chart(attendanceCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                            datasets: [{
+                                label: 'Attendance %',
+                                data: [85, 90, 78, 92, 88, 95],
+                                borderColor: 'hsl(221.2 83.2% 53.3%)',
+                                backgroundColor: 'hsla(221.2, 83.2%, 53.3%, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Performance Chart
+                const performanceCtx = document.getElementById('performanceChart');
+                if (performanceCtx && !performanceCtx.chart) {
+                    performanceCtx.chart = new Chart(performanceCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Present', 'Absent', 'Late'],
+                            datasets: [{
+                                data: [75, 20, 5],
+                                backgroundColor: [
+                                    'hsl(142.1 76.2% 36.3%)',
+                                    'hsl(0 84.2% 60.2%)',
+                                    'hsl(24.6 95% 53.1%)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Prevent form submissions in mockup
+            document.addEventListener('submit', function(e) {
+                if (e.target.dataset.mock === 'true') {
+                    e.preventDefault();
+                    // TODO: Implement actual form submission logic
+                }
+            });
+
+            // Close modals when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
+                    const modals = document.querySelectorAll('[id$="Modal"]');
+                    modals.forEach(modal => {
+                        modal.classList.add('hidden');
+                    });
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
